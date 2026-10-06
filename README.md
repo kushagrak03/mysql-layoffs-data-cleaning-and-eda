@@ -78,4 +78,4 @@ Exploratory data analysis on the cleaned table: layoffs by industry, country and
 
 **Kushagra Kumar**
 Electronics & Telecommunications Engineering student | Data & Marketing enthusiast
-🔗 [LinkedIn](your-linkedin-link) · 📧 your-email@example.com
+🔗 [LinkedIn]([your-linkedin-link](https://www.linkedin.com/in/kushagra-kumar-a3971224b)) · 📧 kushagrak00@gmail.com
