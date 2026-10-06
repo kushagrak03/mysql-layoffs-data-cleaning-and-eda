@@ -1,21 +1,20 @@
-# 🧹 Layoffs Data Cleaning Project (MySQL)
+# 📊 Layoffs Data Cleaning & Exploratory Data Analysis (MySQL)
 
-A complete data cleaning workflow in **MySQL** on a global company layoffs dataset. The raw data contains duplicates, inconsistent text, text-formatted dates, and missing values. This project turns it into a clean, analysis-ready table.
+An end-to-end SQL project on a global company layoffs dataset. The first half cleans messy raw data into an analysis-ready table, and the second half explores it to find layoff trends across companies, industries, countries, funding stages and time.
 
 ## 📌 Project Overview
 
-Raw data is rarely ready for analysis. This project walks through a structured, repeatable cleaning process using only SQL:
-
-1. Remove duplicates
-2. Standardize the data
-3. Handle NULL and blank values
-4. Remove unnecessary rows and columns
+| Phase | Goal | File |
+|-------|------|------|
+| 1. Data Cleaning | Turn raw, messy data into a reliable table | `data_cleaning.sql` |
+| 2. Exploratory Data Analysis | Find trends and patterns in the cleaned data | `eda.sql` |
 
 ## 📂 Repository Structure
 
 ```
 ├── layoffs.csv           # Raw dataset
-├── data_cleaning.sql     # All cleaning queries, in order
+├── data_cleaning.sql     # Phase 1: cleaning queries
+├── eda.sql               # Phase 2: exploratory analysis queries
 └── README.md
 ```
 
@@ -26,56 +25,65 @@ Columns: `company`, `location`, `industry`, `total_laid_off`, `percentage_laid_o
 ## 🛠️ Tools & Skills Used
 
 - **MySQL** (MySQL Workbench)
-- **Window functions:** `ROW_NUMBER() OVER (PARTITION BY ...)`
-- **CTEs** (Common Table Expressions)
+- **Window functions:** `ROW_NUMBER()`, `DENSE_RANK()`, rolling `SUM() OVER()`
+- **CTEs** (including multi-step CTEs)
 - **Self-joins** to fill missing values
-- **String functions:** `TRIM`, `TRIM(TRAILING ...)`, `LIKE`
-- **Date functions:** `STR_TO_DATE`
+- **Aggregations:** `GROUP BY`, `SUM`, `MAX`, `MIN`
+- **String and date functions:** `TRIM`, `SUBSTRING`, `STR_TO_DATE`, `YEAR`
 - **DDL / DML:** `CREATE TABLE ... LIKE`, `ALTER TABLE`, `UPDATE`, `DELETE`
 
-## 🔄 Cleaning Process
+---
 
-### 0. Staging table
-Created `layoffs_staging` as a copy of the raw table so the original data is never modified.
+## 🧹 Phase 1: Data Cleaning
 
-### 1. Removing duplicates
-- Used `ROW_NUMBER()` partitioned across all columns to flag duplicate rows (`row_num > 1`).
-- Since MySQL doesn't allow deleting directly from a CTE, created `layoffs_staging2` with an extra `row_num` column, inserted the numbered data, and deleted the duplicates there.
+0. **Staging table:** created `layoffs_staging` as a copy so the raw data is never modified.
+1. **Removed duplicates:** used `ROW_NUMBER()` partitioned across all columns to flag duplicates. Since MySQL doesn't allow deleting from a CTE, I created `layoffs_staging2` with a `row_num` column and deleted duplicates there.
+2. **Standardized data:**
+   - Trimmed whitespace in `company`
+   - Merged industry variants (`Crypto`, `Crypto Currency`, `CryptoCurrency`) into `Crypto`
+   - Removed the trailing period from `United States.`
+   - Converted `date` from text to a real `DATE` using `STR_TO_DATE` and `ALTER TABLE`
+3. **Handled NULL and blank values:** converted blank industries to `NULL`, then used a **self-join** to fill them from other rows of the same company.
+4. **Removed unnecessary data:** deleted rows with no layoff information (both `total_laid_off` and `percentage_laid_off` NULL) and dropped the helper `row_num` column.
 
-### 2. Standardizing data
-- **Whitespace:** trimmed leading/trailing spaces in `company`.
-- **Industry:** merged variants such as `Crypto`, `Crypto Currency` and `CryptoCurrency` into one `Crypto` label.
-- **Country:** removed the trailing period in `United States.`.
-- **Dates:** converted `date` from text to a proper `DATE` using `STR_TO_DATE`, then changed the column type with `ALTER TABLE`.
+---
 
-### 3. NULL and blank values
-- Converted blank industry values to `NULL`.
-- Used a **self-join** to fill missing `industry` values from other rows of the same company (e.g. Airbnb).
+## 🔍 Phase 2: Exploratory Data Analysis
 
-### 4. Removing unnecessary data
-- Deleted rows where both `total_laid_off` and `percentage_laid_off` are `NULL`, since they carry no usable layoff information.
-- Dropped the helper `row_num` column.
+Questions explored on the cleaned table:
 
-## ✅ Result
+- What are the maximum layoff numbers and percentages?
+- Which companies shut down completely (`percentage_laid_off = 1`), and how much funding had they raised?
+- Which **companies**, **countries**, **industries** and **funding stages** had the most layoffs?
+- What is the date range of the data, and how do layoffs change **year by year**?
+- What is the **month-by-month** trend, and the **rolling total** over time?
+- Who are the **top companies by layoffs in each year**? (`DENSE_RANK()` partitioned by year)
 
-A clean `layoffs_staging2` table with:
-- No duplicate records
-- Consistent company, industry and country values
-- A true `DATE` column
-- Filled-in industries where recoverable
-- No rows without layoff information
+### Key Findings
+
+> Replace these with your real results from running `eda.sql`.
+
+- **Date range covered:** [start date] to [end date]
+- **Company with the most layoffs:** [company] ([number])
+- **Country with the most layoffs:** [country] ([number or %])
+- **Year with the most layoffs:** [year] ([number])
+- **Stage hit hardest:** [stage]
+- **Total layoffs across the dataset (rolling total, final month):** [number]
+
+---
 
 ## ▶️ How to Run
 
-1. Create a schema and import `layoffs.csv` as a table named `layoffs` (MySQL Workbench → Table Data Import Wizard).
-2. Open `data_cleaning.sql` and run it step by step, top to bottom.
+1. Create a schema and import `layoffs.csv` into a table named `layoffs` (MySQL Workbench → Table Data Import Wizard).
+2. Run `data_cleaning.sql` top to bottom. This creates the `layoffs_staging2` table.
+3. Run `eda.sql` on the cleaned table.
 
-## 🔮 Next Steps
+## 🔮 Possible Next Steps
 
-Exploratory data analysis on the cleaned table: layoffs by industry, country and year, top companies by layoffs, and rolling totals over time.
+Visualize the results in Power BI or Excel (layoffs by year, top companies, industry trends).
 
 ## 👤 Author
 
 **Kushagra Kumar**
 Electronics & Telecommunications Engineering student | Data & Marketing enthusiast
-🔗 [LinkedIn](https://www.linkedin.com/in/kushagra-kumar-a3971224b) · 📧 kushagrak00@gmail.com
+🔗 [LinkedIn](your-linkedin-link) · 📧 your-email@example.com
