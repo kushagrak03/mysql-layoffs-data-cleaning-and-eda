@@ -86,4 +86,4 @@ Visualize the results in Power BI or Excel (layoffs by year, top companies, indu
 
 **Kushagra Kumar**
 Electronics & Telecommunications Engineering student | Data & Marketing enthusiast
-🔗 [LinkedIn](your-linkedin-link) · 📧 your-email@example.com
+🔗 [LinkedIn](https://www.linkedin.com/in/kushagra-kumar-a3971224b) · 📧 kushagrak00@gmail.com
